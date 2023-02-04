@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    <title>Class Match</title>
+    <style type="text/css">
+        /* 全体 */
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: rgb(255, 255, 255);
+            width: 500px;
+            height: auto;
+            margin: 0 auto;
+            border: 3px solid black;
+
+        }
+
+        .contents {
+
+            background-color: rgb(35, 130, 218);
+
+        }
+
+        .header {
+            background-color: rgb(35, 130, 218);
+            color: white;
+            text-align: center;
+            padding-bottom: 10px;
+        }
+
+        /* フォーム */
+        .form-inline {
+            background-color: rgb(35, 130, 218);
+            width: 500px;
+            color: white;
+        }
+
+        .name-form {
+            width: 300px;
+        }
+
+        #register a{
+            color: white;
+            font-weight: bold;
+        }
+        #register a:hover{
+            color: rgb(243, 192, 133)(131, 82, 82);
+        }
+
+
+
+        /* 座席 */
+
+        #sheets {
+            background-color: rgb(255, 242, 204);
+            width: 500px;
+            height: 600px;
+            display: flex;
+            flex-wrap: wrap;
+            text-align: center;
+        }
+
+
+
+        .roomLabel {
+            font-weight: bold;
+        }
+
+        .nameLabel {
+            font-weight: bold;
+        }
+
+
+        .sheet {
+            width: 500px;
+            height: 600px;
+            margin: 0 auto;
+        }
+
+
+
+
+
+        /* チャットログ */
+        #chatLogs {
+            background-color: rgba(189, 221, 247, 0.986);
+            width: 500px;
+            height: 200px;
+            overflow: scroll;
+        }
+
+        #chatLogs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .fbox {
+            position: relative;
+            display: inline-block;
+            padding: 6px;
+            text-align: left;
+            background-color: #ffffff;
+            border: 3px solid #acacac;
+            margin: 5px 5px 5px 3px;
+            border-radius: 15px;
+        }
+
+        .fbox:after,
+        .fbox:before {
+            content: "";
+            position: absolute;
+            height: 0;
+            width: 0;
+        }
+
+        .fbox:after {
+            top: 5px;
+            left: -9px;
+            border: 6px solid transparent;
+            border-right: 11px solid #ffffff;
+            /*13px*/
+        }
+
+        .fbox:before {
+            top: 8px;
+            left: -9px;
+            border: 3px solid transparent;
+            border-right: 3px solid #acacac;
+            /*10px*/
+        }
+
+
+        .tuber {
+            /* position: fixed; */
+            /* 要素の位置を固定する */
+            /* bottom: 0; */
+            /* 基準の位置を画面の一番下に指定する */
+            right: 0;
+            width: 100%;
+            height: 49px;
+            background-color: white;
+            display: flex;
+        }
+
+        .tuber-i {
+            width: 25%;
+            height: 100%;
+            text-align: center;
+        }
+
+        .tuber-i-label {
+            font-size: 15px;
+            color: #8C8D8D;
+            margin-top: 15px;
+            padding: 0px;
+            font-weight: bold;
+        }
+
+        a {
+            color: #8C8D8D;
+            text-decoration: none;
+        }
+
+        a:visited{
+            text-decoration: none;
+            color: #8C8D8D;
+        }
+
+    </style>
+    <!-- 座席 -->
+    <link rel="stylesheet" href="seatLayout.css">
+    <script src="seatLayout.js"></script>
+    <script src="seatLayout.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- C01. Socket.IOクライアントライブラリの読込み -->
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="contents">
+            <div class="header">
+                <h1>Class Match</h1>
+
+            </div>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="roomLabel" for="rooms">ROOM</label>
+                    <select class="form-control" id="rooms">
+                        <option value="room01">RY104</option>
+                        <option value="room02">RY204</option>
+                        <option value="room03">RY304</option>
+                    </select>
+                    <br>
+                    <label class="nameLabel" for="msgForm">NAME</label>
+                    <input type="text" class="form-control name-form" id="msgForm">
+                    <button type="submit" class="btn btn-primary" id="sendButton">JOIN</button>
+                </div>
+                <div id="register"><a href="https://docs.google.com/spreadsheets/d/1awFNqxVOdKMa8CTEQ_rmaU0J-B61vbytF4ACwpDyTcA/edit#gid=1488517292">座席登録</a></div>
+            </form>
+            <div id="sheets">
+               
+                <iframe
+                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQfkfjb860TRiUCtM6Ks7TXZUXICmLCLIEr-Zr2QUI4BfoJXDEALubTm18Q9LDmXks_voh_KUW6NMjC/pubhtml?widget=true&amp;headers=false"
+                    class="sheet"></iframe>
+            </div>
+            <div id="chatarea">
+                <div id="chatLogs"></div>
+            </div>
+
+        </div>
+        <!-- <div class="tuber">
+            <div class="tuber-i">
+
+                <p class="tuber-i-label">
+                    <a href="index.html">HOME</a>
+                </p>
+            </div>
+            <div class="tuber-i">
+
+                <p class="tuber-i-label">
+                    <a href="board.html">掲示板</a>
+                </p>
+            </div>
+            <div class="tuber-i">
+                <p class="tuber-i-label">
+                    <a href="dm.html">DM</a>
+                </p>
+            </div>
+            <div class="tuber-i">
+                <p class="tuber-i-label">
+                    <a href="mypage.html">MyPage</a>
+                </p>
+            </div>
+
+        </div> -->
+    </div>
+
+
+
+
+
+
+    <script type="text/javascript">
+
+        var socket = io.connect(); // C02. ソケットへの接続
+        var isEnter = false;
+        var name = '';
+
+        // C04. server_to_clientイベント・データを受信する
+        socket.on("server_to_client", function (data) { appendMsg(data.value) });
+        function appendMsg(text) {
+            $("#chatLogs").append("<div class='fbox'>" + text + "</div><br>");
+        }
+
+
+
+
+
+        $("form").submit(function (e) {
+            var message = $("#msgForm").val();
+            var selectRoom = $("#rooms").val();
+            $("#msgForm").val('');
+            if (isEnter) {
+                message = "<strong style='color:blue;'>" + name + "</strong>：" + message;
+                // C03. client_to_serverイベント・データを送信する
+                socket.emit("client_to_server", { value: message });
+            } else {
+                name = message;
+                var entryMessage = "<strong style='color:red;'>" + name + "</strong>さんが入室しました。";
+                socket.emit("client_to_server_join", { value: selectRoom });
+                // C05. client_to_server_broadcastイベント・データを送信する
+                socket.emit("client_to_server_broadcast", { value: entryMessage });
+                // C06. client_to_server_personalイベント・データを送信する
+                socket.emit("client_to_server_personal", { value: name });
+                changeLabel();
+            }
+            e.preventDefault();
+        });
+
+        function changeLabel() {
+            $(".nameLabel").text("メッセージ：");
+            $("#rooms").prop("disabled", true);
+            $("button").text("送信");
+            isEnter = true;
+        }
+
+
+
+    </script>
+</body>
+
+</html>
